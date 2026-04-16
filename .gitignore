@@ -1,0 +1,67 @@
+# ── Dependencies ─────────────────────────────────────────────────
+node_modules/
+
+# ── Build outputs ────────────────────────────────────────────────
+dist/
+dist-ssr/
+build/
+out/
+*.js.map
+*.d.ts.map
+
+# ── Environment & secrets ─────────────────────────────────────────
+.env
+.env.*
+!.env.example
+
+# ── Electron packager output ──────────────────────────────────────
+client/release/
+client/out/
+
+# ── TypeScript incremental build cache ───────────────────────────
+*.tsbuildinfo
+
+# ── Logs ─────────────────────────────────────────────────────────
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ── Test coverage ────────────────────────────────────────────────
+coverage/
+.nyc_output/
+
+# ── Vite cache ───────────────────────────────────────────────────
+.vite/
+vite.config.ts.timestamp-*
+
+# ── macOS ─────────────────────────────────────────────────────────
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# ── Windows ───────────────────────────────────────────────────────
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ── Editors ───────────────────────────────────────────────────────
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.swp
+
+# ── Misc ──────────────────────────────────────────────────────────
+*.local
+.cache/
+
+# ── Misplaced directory (artefact — safe to keep ignored) ─────────
+Users/
