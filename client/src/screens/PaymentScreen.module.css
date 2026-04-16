@@ -1,0 +1,40 @@
+.container { display: flex; flex-direction: column; height: 100vh; }
+.loading { align-items: center; display: flex; height: 100vh; justify-content: center; color: #aaa; }
+
+.header { align-items: center; background: #2a2a2a; display: flex; gap: 16px; padding: 12px 20px; }
+.header h2 { font-size: 1.2rem; flex: 1; }
+.back { background: none; border: 1px solid #555; border-radius: 8px; color: #fff; cursor: pointer; font-size: 0.9rem; padding: 8px 16px; }
+
+.body { display: flex; flex-direction: column; flex: 1; gap: 20px; max-width: 480px; margin: 0 auto; padding: 24px 16px; width: 100%; }
+
+.summary { background: #2a2a2a; border-radius: 12px; display: flex; flex-direction: column; gap: 10px; padding: 20px; }
+
+.line { display: flex; justify-content: space-between; font-size: 1rem; color: #ccc; }
+.totalRow { border-top: 1px solid #444; font-size: 1.3rem; font-weight: 700; color: #fff; padding-top: 10px; margin-top: 4px; }
+
+.section { display: flex; flex-direction: column; gap: 10px; }
+.label { color: #aaa; font-size: 0.85rem; text-transform: uppercase; }
+
+.tipRow { display: flex; flex-wrap: wrap; gap: 8px; }
+.tipBtn { background: #333; border: 2px solid transparent; border-radius: 8px; color: #fff; cursor: pointer; font-size: 0.95rem; padding: 10px 16px; }
+.tipBtn.tipActive { border-color: #FF5A1F; color: #FF5A1F; }
+
+.customInput { background: #1E1E1E; border: 1px solid #444; border-radius: 8px; color: #fff; font-size: 1.1rem; padding: 10px 14px; width: 140px; }
+
+.methodRow { display: flex; gap: 10px; }
+.methodBtn { background: #333; border: 2px solid transparent; border-radius: 10px; color: #fff; cursor: pointer; flex: 1; font-size: 1rem; padding: 14px; }
+.methodBtn.methodActive { border-color: #FF5A1F; color: #FF5A1F; }
+
+.error { color: #E53935; font-size: 0.875rem; }
+
+.payBtn { background: #FF5A1F; border: none; border-radius: 12px; color: #fff; cursor: pointer; font-size: 1.2rem; font-weight: 700; margin-top: auto; padding: 18px; transition: opacity 0.15s; }
+.payBtn:hover:not(:disabled) { opacity: 0.85; }
+.payBtn:disabled { opacity: 0.4; }
+
+/* Success */
+.success { align-items: center; display: flex; flex-direction: column; gap: 20px; height: 100%; justify-content: center; }
+.tick { background: #43A047; border-radius: 50%; color: #fff; font-size: 3rem; height: 90px; line-height: 90px; text-align: center; width: 90px; }
+.success h2 { font-size: 1.8rem; }
+.totalLine { color: #aaa; font-size: 1.1rem; }
+.doneBtn { background: #FF5A1F; border: none; border-radius: 10px; color: #fff; cursor: pointer; font-size: 1.1rem; font-weight: 600; padding: 14px 40px; }
+.reprintBtn { background: none; border: 1px solid #555; border-radius: 8px; color: #aaa; cursor: pointer; font-size: 0.9rem; padding: 8px 24px; }

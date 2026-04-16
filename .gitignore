@@ -63,5 +63,17 @@ Desktop.ini
 *.local
 .cache/
 
+# ── npm package lock (monorepo uses workspaces — keep root lock only) ─────────
+server/package-lock.json
+client/package-lock.json
+shared/package-lock.json
+
+# ── Electron app config written at runtime ───────────────────────
+# (stored in OS userData, but guard against any local copies)
+config.json
+
+# ── PostgreSQL local data dir (if ever run embedded for dev) ─────
+pgdata/
+
 # ── Misplaced directory (artefact — safe to keep ignored) ─────────
 Users/

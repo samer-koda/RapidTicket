@@ -1,0 +1,225 @@
+.container { display: flex; flex-direction: column; height: 100vh; }
+
+.header {
+  align-items: center;
+  background: #2a2a2a;
+  display: flex;
+  gap: 16px;
+  padding: 12px 20px;
+}
+
+.header h2 { flex: 1; font-size: 1.2rem; }
+
+.back, .payBtn {
+  background: none;
+  border: 1px solid #555;
+  border-radius: 8px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 8px 16px;
+}
+
+.payBtn { background: #43A047; border-color: #43A047; font-weight: 600; }
+
+.body { display: flex; flex: 1; overflow: hidden; }
+
+.menu { display: flex; flex-direction: column; width: 60%; border-right: 1px solid #333; }
+
+.categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px;
+  background: #222;
+}
+
+.catBtn {
+  background: #333;
+  border: none;
+  border-radius: 20px;
+  color: #aaa;
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 6px 16px;
+}
+
+.catBtn.catActive { background: #FF5A1F; color: #fff; }
+
+.items {
+  display: grid;
+  flex: 1;
+  gap: 8px;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  overflow-y: auto;
+  padding: 12px;
+}
+
+.menuItem {
+  align-items: flex-start;
+  background: #2a2a2a;
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  font-size: 0.95rem;
+  gap: 6px;
+  padding: 16px 12px;
+  text-align: left;
+  transition: background 0.15s;
+}
+
+.menuItem:hover { background: #3a3a3a; }
+
+.price { color: #FF5A1F; font-weight: 600; }
+
+.order {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+.order h3 { font-size: 1.1rem; }
+
+.section { display: flex; flex-direction: column; gap: 6px; }
+.sectionLabel { color: #aaa; font-size: 0.8rem; text-transform: uppercase; }
+
+.submittedItem {
+  align-items: center;
+  display: flex;
+  font-size: 0.9rem;
+  justify-content: space-between;
+  padding: 4px 0;
+}
+
+.itemStatus { color: #43A047; font-size: 0.8rem; text-transform: uppercase; }
+.divider { border-top: 1px solid #333; margin: 8px 0; }
+
+.draftItem {
+  background: #2a2a2a;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+}
+
+.draftName { align-items: center; display: flex; gap: 10px; font-weight: 600; }
+
+.qtyBtn {
+  background: #333;
+  border: none;
+  border-radius: 50%;
+  color: #fff;
+  cursor: pointer;
+  font-size: 1rem;
+  height: 26px;
+  width: 26px;
+}
+
+.mod { color: #aaa; font-size: 0.8rem; }
+.notes { color: #888; font-size: 0.8rem; font-style: italic; }
+
+.remove { align-self: flex-end; background: none; border: none; color: #E53935; cursor: pointer; font-size: 0.8rem; }
+
+.empty { color: #555; text-align: center; margin-top: 40px; }
+.error { color: #E53935; font-size: 0.875rem; }
+
+.submitBtn {
+  background: #FF5A1F;
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-top: auto;
+  padding: 14px;
+  transition: opacity 0.15s;
+}
+
+.submitBtn:hover:not(:disabled) { opacity: 0.85; }
+.submitBtn:disabled { opacity: 0.4; }
+
+/* Modal */
+.overlay {
+  align-items: center;
+  background: rgba(0,0,0,0.7);
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  left: 0;
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 100;
+}
+
+.modal {
+  background: #2a2a2a;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 480px;
+  padding: 28px;
+  width: 90%;
+}
+
+.modal h3 { font-size: 1.2rem; }
+
+.modLabel { color: #aaa; font-size: 0.8rem; text-transform: uppercase; }
+
+.modList { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.modChip {
+  background: #333;
+  border: 2px solid transparent;
+  border-radius: 20px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 6px 14px;
+  transition: border-color 0.15s;
+}
+
+.modChip.modSelected { border-color: #FF5A1F; }
+
+.notesInput {
+  background: #1E1E1E;
+  border: 1px solid #444;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 0.95rem;
+  padding: 10px;
+  resize: none;
+  width: 100%;
+}
+
+.modalActions { display: flex; gap: 10px; }
+
+.cancelBtn {
+  background: none;
+  border: 1px solid #555;
+  border-radius: 8px;
+  color: #aaa;
+  cursor: pointer;
+  flex: 1;
+  padding: 12px;
+}
+
+.addBtn {
+  background: #FF5A1F;
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  cursor: pointer;
+  flex: 2;
+  font-weight: 600;
+  padding: 12px;
+}

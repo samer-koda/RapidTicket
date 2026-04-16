@@ -2,6 +2,7 @@
   <img src="docs/logos/logo.png" alt="RapidTicket" width="220" />
   <h3>Speed at Every Table.</h3>
   <p>A LAN-only point-of-sale system for restaurants and bars.<br/>Runs entirely on your local network — no internet required.</p>
+  <img src="https://img.shields.io/badge/status-work%20in%20progress-yellow" alt="Work in Progress" />
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache_2.0-orange.svg" alt="License: Apache 2.0" /></a>
 </div>
 

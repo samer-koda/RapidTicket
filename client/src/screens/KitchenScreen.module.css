@@ -1,0 +1,84 @@
+.container { display: flex; flex-direction: column; height: 100vh; }
+
+.header {
+  align-items: center;
+  background: #2a2a2a;
+  display: flex;
+  gap: 16px;
+  padding: 14px 20px;
+}
+
+.header h2 { font-size: 1.2rem; flex: 1; }
+.count { color: #aaa; font-size: 0.9rem; }
+
+.tickets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  overflow-y: auto;
+  padding: 16px;
+  align-items: flex-start;
+}
+
+.empty { color: #555; margin: 40px auto; }
+
+.ticket {
+  background: #2a2a2a;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 260px;
+  max-width: 320px;
+  padding: 16px;
+}
+
+.ticketHeader { align-items: center; display: flex; justify-content: space-between; }
+.orderId { font-weight: 700; font-size: 1rem; letter-spacing: 0.05em; }
+
+.orderStatus { font-size: 0.75rem; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
+.sent { background: #FF5A1F22; color: #FF5A1F; }
+.ready { background: #43A04722; color: #43A047; }
+
+.divider { border-top: 1px solid #444; }
+
+.item { display: flex; flex-direction: column; gap: 4px; padding: 6px 0; border-bottom: 1px solid #333; }
+.item:last-child { border-bottom: none; }
+
+.itemHeader { align-items: center; display: flex; gap: 8px; }
+.qty { color: #FF5A1F; font-weight: 700; width: 28px; }
+.itemName { flex: 1; font-size: 1rem; font-weight: 600; }
+
+.badge { font-size: 0.7rem; padding: 2px 8px; border-radius: 10px; }
+.new { background: #FF5A1F33; color: #FF5A1F; }
+.preparing { background: #FFC10733; color: #FFC107; }
+.ready { background: #43A04733; color: #43A047; }
+
+.modifier { color: #aaa; font-size: 0.85rem; padding-left: 36px; }
+.notes { color: #888; font-size: 0.8rem; font-style: italic; padding-left: 36px; }
+
+.actions { display: flex; gap: 8px; margin-top: 6px; }
+
+.prepBtn {
+  background: #FFC10733;
+  border: 1px solid #FFC107;
+  border-radius: 6px;
+  color: #FFC107;
+  cursor: pointer;
+  flex: 1;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 6px;
+}
+
+.readyBtn {
+  background: #43A04733;
+  border: 1px solid #43A047;
+  border-radius: 6px;
+  color: #43A047;
+  cursor: pointer;
+  flex: 1;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 6px;
+}

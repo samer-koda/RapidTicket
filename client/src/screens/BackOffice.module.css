@@ -1,0 +1,663 @@
+.container {
+  display: flex;
+  height: 100vh;
+  background: #1E1E1E;
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+}
+
+.sidebar {
+  width: 180px;
+  background: #141414;
+  border-right: 1px solid #333;
+  display: flex;
+  flex-direction: column;
+  padding: 8px 0;
+  flex-shrink: 0;
+}
+
+.sidebarTitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: #FF5A1F;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #333;
+  margin-bottom: 8px;
+}
+
+.sidebarBtn {
+  background: none;
+  border: none;
+  color: #ccc;
+  font-size: 14px;
+  text-align: left;
+  padding: 10px 16px;
+  cursor: pointer;
+  border-left: 3px solid transparent;
+  transition: background 0.1s;
+}
+
+.sidebarBtn:hover { background: #222; color: #fff; }
+.sidebarBtn.active { background: #222; color: #FF5A1F; border-left-color: #FF5A1F; }
+
+.sidebarSpacer { flex: 1; }
+
+.sidebarGroup {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: #555;
+  padding: 14px 16px 4px;
+}
+
+.closeBtn {
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 13px;
+  text-align: left;
+  padding: 12px 16px;
+  cursor: pointer;
+  border-top: 1px solid #333;
+}
+.closeBtn:hover { color: #fff; }
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 24px;
+}
+
+.tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+/* Used by tabs that contain a fill-height canvas (no scroll needed) */
+.tabCanvas {
+  overflow: hidden;
+}
+
+.tabHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.tabHeader h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  flex: 1;
+}
+
+.addBtn {
+  padding: 8px 16px;
+  background: #FF5A1F;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.addBtn:hover { background: #e04e14; }
+.addBtn:disabled { background: #555; cursor: default; }
+
+.snapBtn {
+  background: #2a2a2a;
+  border: 1px solid #444;
+  border-radius: 6px;
+  color: #aaa;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 12px;
+}
+.snapBtn:hover { border-color: #FF5A1F; color: #fff; }
+.snapActive { border-color: #FF5A1F; color: #FF5A1F; background: #1e1209; }
+
+.headerSelect {
+  appearance: none;
+  background: #2a2a2a url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23aaa' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 10px center;
+  border: 1px solid #444;
+  border-radius: 6px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 32px 6px 12px;
+  min-width: 100px;
+  transition: border-color 0.1s;
+}
+.headerSelect:hover { border-color: #FF5A1F; }
+.headerSelect:focus { outline: none; border-color: #FF5A1F; }
+
+.deleteBtn {
+  background: #7a1a1a !important;
+  color: #fff !important;
+}
+.deleteBtn:hover { background: #9e2020 !important; }
+
+/* ── Floor canvas (table drag editor) ─────────────────────────── */
+.floorCanvasWrap {
+  position: relative;
+  flex: 1;
+  min-height: 400px;
+  margin-top: 8px;
+  border: 1px solid #333;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #1a1a1a;
+  user-select: none;
+}
+
+.floorCanvasSnap {
+  background-image: radial-gradient(circle, #333 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.floorCanvas {
+  position: absolute;
+  inset: 0;
+}
+
+.canvasOverlay {
+  position: absolute;
+  bottom: 14px;
+  right: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 10;
+}
+
+.overlaySnapBtn {
+  background: rgba(30,30,30,0.88);
+  border: 1px solid #444;
+  border-radius: 6px;
+  color: #aaa;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 10px;
+  backdrop-filter: blur(4px);
+}
+.overlaySnapBtn:hover { border-color: #FF5A1F; color: #fff; }
+.overlaySnapActive { border-color: #FF5A1F !important; color: #FF5A1F !important; }
+
+.overlayZoom {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: rgba(30,30,30,0.88);
+  border: 1px solid #444;
+  border-radius: 6px;
+  backdrop-filter: blur(4px);
+  overflow: hidden;
+}
+
+.overlayZoom button {
+  background: none;
+  border: none;
+  color: #bbb;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 700;
+  padding: 4px 9px;
+  line-height: 1;
+}
+.overlayZoom button:hover { color: #FF5A1F; }
+
+.overlayZoom span {
+  color: #888;
+  font-size: 11px;
+  min-width: 36px;
+  text-align: center;
+  border-left: 1px solid #383838;
+  border-right: 1px solid #383838;
+  padding: 4px 0;
+}
+
+.canvasTable {
+  position: absolute;
+  width: 90px;
+  height: 90px;
+  background: #2a2a2a;
+  border: 2px solid #444;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  cursor: grab;
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+}
+.canvasTable:hover { border-color: #FF5A1F; }
+
+.canvasRound { border-radius: 50%; }
+
+.canvasSelected {
+  border-color: #FF5A1F;
+  background: #2e1e14;
+  box-shadow: 0 0 0 3px rgba(255, 90, 31, 0.3);
+}
+
+.canvasDragging {
+  cursor: grabbing;
+  opacity: 0.85;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  z-index: 10;
+}
+
+.canvasEmpty {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #555;
+  font-size: 14px;
+  pointer-events: none;
+}
+
+.modifiersLayout {
+  display: flex;
+  gap: 16px;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.modifiersPanel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #1e1e1e;
+  border: 1px solid #333;
+  border-radius: 8px;
+  overflow-y: auto;
+  padding: 16px;
+  gap: 12px;
+}
+
+.modifiersPanelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 600;
+  font-size: 13px;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #333;
+}
+
+.emptyHint {
+  color: #555;
+  font-size: 14px;
+  margin-top: 16px;
+  text-align: center;
+}
+
+.form {
+  background: #252525;
+  border: 1px solid #3a3a3a;
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+  align-items: center;
+}
+
+.form input,
+.form select {
+  background: #1a1a1a;
+  border: 1px solid #444;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 14px;
+  padding: 8px 10px;
+  min-width: 160px;
+}
+
+.form input:focus,
+.form select:focus { outline: 1px solid #FF5A1F; }
+
+.form label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.fieldGroup span {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #888;
+  letter-spacing: 0.05em;
+}
+
+.form button {
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: none;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.form button:first-of-type { background: #FF5A1F; color: #fff; }
+.form button:first-of-type:hover { background: #e04e14; }
+.form button:last-of-type { background: #333; color: #ccc; }
+.form button:last-of-type:hover { background: #444; }
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.table th {
+  text-align: left;
+  padding: 10px 12px;
+  background: #252525;
+  color: #999;
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid #333;
+}
+
+.table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #2a2a2a;
+  color: #ddd;
+}
+
+.table tr:hover td { background: #252525; }
+
+.table button {
+  background: none;
+  border: 1px solid #444;
+  color: #ccc;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 6px;
+}
+.table button:hover { background: #333; color: #fff; }
+
+.table code {
+  background: #1a1a1a;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 12px;
+  color: #aaa;
+}
+
+.table input {
+  background: #1a1a1a;
+  border: 1px solid #444;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 13px;
+  padding: 6px 8px;
+  width: 100%;
+}
+
+.dirtyInput { border-color: #FF5A1F !important; }
+
+.savedBadge {
+  background: #43A047;
+  color: #fff;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.dateInput {
+  background: #1a1a1a;
+  border: 1px solid #444;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 14px;
+  padding: 8px 10px;
+}
+
+.reportGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stat {
+  background: #252525;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.stat label {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: #888;
+  letter-spacing: 0.5px;
+}
+
+.stat span {
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.report h4 {
+  font-size: 14px;
+  color: #aaa;
+  margin: 0 0 12px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.empty {
+  color: #666;
+  font-size: 15px;
+  margin: 40px auto;
+  text-align: center;
+}
+
+/* ── Danger Zone ─────────────────────────────────────────────── */
+.dangerZone {
+  margin-top: 48px;
+  padding-top: 24px;
+  border-top: 1px solid #2e2e2e;
+}
+
+.dangerZoneLabel {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #c0392b;
+  margin: 0 0 16px 0;
+}
+
+.dangerZoneRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  background: #222;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 16px 20px;
+}
+
+.dangerZoneText {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dangerZoneText strong {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.dangerZoneText span {
+  font-size: 13px;
+  color: #777;
+  max-width: 480px;
+  line-height: 1.5;
+}
+
+.dangerBtn {
+  flex-shrink: 0;
+  padding: 8px 18px;
+  background: transparent;
+  border: 1px solid #c0392b;
+  border-radius: 6px;
+  color: #c0392b;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+.dangerBtn:hover {
+  background: #c0392b;
+  color: #fff;
+}
+
+.dangerZoneConfirm {
+  background: #222;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dangerZoneWarning {
+  margin: 0;
+  font-size: 14px;
+  color: #ddd;
+  line-height: 1.5;
+}
+
+.dangerZoneActions {
+  display: flex;
+  gap: 10px;
+}
+
+.dangerBtnSolid {
+  padding: 8px 18px;
+  background: #c0392b;
+  border: 1px solid #c0392b;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.dangerBtnSolid:hover { background: #a93226; border-color: #a93226; }
+
+.dangerCancelBtn {
+  padding: 8px 18px;
+  background: transparent;
+  border: 1px solid #444;
+  border-radius: 6px;
+  color: #aaa;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+.dangerCancelBtn:hover { border-color: #666; color: #fff; }
+
+.dangerZoneError {
+  color: #e74c3c;
+  font-size: 13px;
+  margin: 0;
+}
+
+.dangerZoneRunning {
+  color: #777;
+  font-size: 14px;
+  margin: 0;
+  padding: 16px 0;
+}
+
+/* ── Factory-reset PIN pad ─────────────────────────────────────── */
+.resetPinDots {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  padding: 4px 0;
+}
+
+.resetPinDot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid #555;
+  display: inline-block;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.resetPinDotFilled {
+  background: #c0392b;
+  border-color: #c0392b;
+}
+
+.resetPinPad {
+  display: grid;
+  grid-template-columns: repeat(3, 48px);
+  gap: 8px;
+  justify-content: center;
+}
+
+.resetPinKey {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  border: 1px solid #444;
+  background: #2a2a2a;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+.resetPinKey:hover:not(:disabled) { background: #3a3a3a; }
+.resetPinKey:disabled { opacity: 0; pointer-events: none; }
