@@ -121,6 +121,26 @@ export const api = {
     listItemModifiers: (itemId: string) => request<Modifier[]>('GET', `/menu/items/${itemId}/modifiers`),
     assignModifier: (itemId: string, modifierId: string) => request<void>('POST', `/menu/items/${itemId}/modifiers/${modifierId}`),
     unassignModifier: (itemId: string, modifierId: string) => request<void>('DELETE', `/menu/items/${itemId}/modifiers/${modifierId}`),
+    itemImageUrl: (id: string) => `${_baseUrl}/menu/items/${id}/image`,
+    uploadItemImage: (id: string, file: File) => {
+      const form = new FormData();
+      form.append('image', file);
+      const headers: Record<string, string> = {};
+      if (_token) headers['Authorization'] = `Bearer ${_token}`;
+      return fetch(`${_baseUrl}/menu/items/${id}/image`, { method: 'POST', headers, body: form })
+        .then(async res => { if (!res.ok) { const e = await res.json().catch(() => ({ message: res.statusText })); throw new Error(e.message || `HTTP ${res.status}`); } });
+    },
+    deleteItemImage: (id: string) => request<void>('DELETE', `/menu/items/${id}/image`),
+    categoryImageUrl: (id: string) => `${_baseUrl}/menu/categories/${id}/image`,
+    uploadCategoryImage: (id: string, file: File) => {
+      const form = new FormData();
+      form.append('image', file);
+      const headers: Record<string, string> = {};
+      if (_token) headers['Authorization'] = `Bearer ${_token}`;
+      return fetch(`${_baseUrl}/menu/categories/${id}/image`, { method: 'POST', headers, body: form })
+        .then(async res => { if (!res.ok) { const e = await res.json().catch(() => ({ message: res.statusText })); throw new Error(e.message || `HTTP ${res.status}`); } });
+    },
+    deleteCategoryImage: (id: string) => request<void>('DELETE', `/menu/categories/${id}/image`),
   },
 
   // ── Orders ──────────────────────────────────────────────────────────────────
@@ -181,9 +201,9 @@ export const api = {
 export interface FloorPlan { id: string; name: string; sortOrder: number; tables: TableRow[]; }
 export interface TableRow { id: string; floorPlanId: string; floorPlanName: string; label: string; name: string; shape: 'RECTANGLE' | 'ROUND'; positionX: number; positionY: number; status: string; occupied: boolean; seatCount: number; seats: number; }
 export interface Seat { id: string; tableId: string; label: string; }
-export interface Category { id: string; name: string; sortOrder: number; }
+export interface Category { id: string; name: string; sortOrder: number; hasImage?: boolean; }
 export interface Modifier { id: string; label: string; action: 'ADD' | 'REMOVE'; priceDelta: number; sortOrder: number; }
-export interface MenuItem { id: string; name: string; categoryId: string; price: number; type: 'FOOD' | 'DRINK'; isTaxable: boolean; printDestination: 'KITCHEN' | 'BAR' | 'NONE'; isAvailable: boolean; available: boolean; sortOrder: number; modifiers: Modifier[]; }
+export interface MenuItem { id: string; name: string; categoryId: string; price: number; type: 'FOOD' | 'DRINK'; isTaxable: boolean; printDestination: 'KITCHEN' | 'BAR' | 'NONE'; isAvailable: boolean; available: boolean; sortOrder: number; modifiers: Modifier[]; hasImage?: boolean; }
 export interface OrderSummary { id: string; tableId: string; status: string; total: number; createdAt: string; createdBy: string; }
 export interface OrderItemModifier { label: string; action: string; priceDelta: number; }
 export interface OrderItem { id: string; name: string; quantity: number; unitPrice: number; isTaxable: boolean; printDestination: string; appliedModifiers: OrderItemModifier[]; notes: string; status: string; }

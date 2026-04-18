@@ -8,7 +8,9 @@ interface Props {
 
 export default function Setup({ onComplete }: Props) {
   const [step, setStep] = useState<'server' | 'printer' | 'registering'>('server');
-  const [serverUrl, setServerUrl] = useState('http://192.168.1.10:3000');
+  const [serverUrl, setServerUrl] = useState(
+    window.electronAPI ? 'http://192.168.1.10:3000' : 'http://localhost:3000',
+  );
   const [printerType, setPrinterType] = useState<'USB' | 'BLUETOOTH' | 'NONE'>('NONE');
   const [printerName, setPrinterName] = useState<string | null>(null);
   const [printers, setPrinters] = useState<{ name: string; isDefault: boolean }[]>([]);
@@ -18,8 +20,12 @@ export default function Setup({ onComplete }: Props) {
     setError('');
     try {
       setBaseUrl(serverUrl);
-      // Quick connectivity check
-      await fetch(`${serverUrl}/settings/tax-rate`).then(r => { if (!r.ok && r.status !== 401) throw new Error(); });
+      // Quick connectivity check (5 s timeout so the button doesn't appear stuck)
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 5000);
+      await fetch(`${serverUrl}/auth/setup-status`, { signal: ctrl.signal })
+        .then(r => { if (!r.ok) throw new Error(); })
+        .finally(() => clearTimeout(timer));
       // Detect printers
       if (window.electronAPI) {
         const list = await window.electronAPI.system.listPrinters();

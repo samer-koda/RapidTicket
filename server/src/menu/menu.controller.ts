@@ -10,7 +10,14 @@ import {
   UseGuards,
   ParseUUIDPipe,
   HttpCode,
+  UseInterceptors,
+  UploadedFile,
+  Res,
+  NotFoundException,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { memoryStorage } from 'multer';
+import type { Response } from 'express';
 import { MenuService } from './menu.service';
 import { CreateCategoryDto, UpdateCategoryDto } from './dto/category.dto';
 import { CreateMenuItemDto, UpdateMenuItemDto } from './dto/menu-item.dto';
@@ -18,6 +25,7 @@ import { CreateModifierDto, UpdateModifierDto } from './dto/modifier.dto';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
+import { Public } from '../common/decorators/public.decorator';
 import { MenuItemType } from '../database/entities/menu-item.entity';
 
 @Controller('menu')
@@ -140,5 +148,69 @@ export class MenuController {
     @Param('modifierId', ParseUUIDPipe) modifierId: string,
   ) {
     return this.menuService.unassignModifier(id, modifierId);
+  }
+
+  // ── Item images ──────────────────────────────────────────────────────────────
+
+  @Post('items/:id/image')
+  @Roles('admin')
+  @UseInterceptors(FileInterceptor('image', { storage: memoryStorage() }))
+  uploadItemImage(
+    @Param('id', ParseUUIDPipe) id: string,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    if (!file) throw new NotFoundException('No file uploaded');
+    return this.menuService.uploadItemImage(id, file.buffer, file.mimetype);
+  }
+
+  @Get('items/:id/image')
+  @Public()
+  async getItemImage(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Res() res: Response,
+  ) {
+    const { buffer, mimeType } = await this.menuService.getItemImage(id);
+    res.set('Content-Type', mimeType);
+    res.set('Cache-Control', 'public, max-age=86400');
+    res.send(buffer);
+  }
+
+  @Delete('items/:id/image')
+  @Roles('admin')
+  @HttpCode(200)
+  deleteItemImage(@Param('id', ParseUUIDPipe) id: string) {
+    return this.menuService.deleteItemImage(id);
+  }
+
+  // ── Category images ──────────────────────────────────────────────────────────
+
+  @Post('categories/:id/image')
+  @Roles('admin')
+  @UseInterceptors(FileInterceptor('image', { storage: memoryStorage() }))
+  uploadCategoryImage(
+    @Param('id', ParseUUIDPipe) id: string,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    if (!file) throw new NotFoundException('No file uploaded');
+    return this.menuService.uploadCategoryImage(id, file.buffer, file.mimetype);
+  }
+
+  @Get('categories/:id/image')
+  @Public()
+  async getCategoryImage(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Res() res: Response,
+  ) {
+    const { buffer, mimeType } = await this.menuService.getCategoryImage(id);
+    res.set('Content-Type', mimeType);
+    res.set('Cache-Control', 'public, max-age=86400');
+    res.send(buffer);
+  }
+
+  @Delete('categories/:id/image')
+  @Roles('admin')
+  @HttpCode(200)
+  deleteCategoryImage(@Param('id', ParseUUIDPipe) id: string) {
+    return this.menuService.deleteCategoryImage(id);
   }
 }

@@ -2,6 +2,7 @@ import {
   Injectable,
   NotFoundException,
   ConflictException,
+  BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -26,8 +27,18 @@ export class MenuService {
 
   // ── Categories ──────────────────────────────────────────────────────────────
 
-  getCategories() {
-    return this.categoryRepo.find({ order: { sortOrder: 'ASC' } });
+  async getCategories() {
+    const cats = await this.categoryRepo.find({ order: { sortOrder: 'ASC' } });
+    if (cats.length === 0) return [];
+    const ids = cats.map(c => c.id);
+    const withImage = await this.categoryRepo
+      .createQueryBuilder('c')
+      .select('c.id', 'id')
+      .where('c.id IN (:...ids)', { ids })
+      .andWhere('c.image IS NOT NULL')
+      .getRawMany<{ id: string }>();
+    const imageSet = new Set(withImage.map(r => r.id));
+    return cats.map(c => ({ ...c, hasImage: imageSet.has(c.id) }));
   }
 
   async createCategory(dto: CreateCategoryDto) {
@@ -73,7 +84,18 @@ export class MenuService {
       qb.andWhere('item.type = :type', { type: filters.type });
     }
 
-    return qb.getMany();
+    const items = await qb.getMany();
+    if (items.length === 0) return [];
+
+    const ids = items.map(i => i.id);
+    const withImage = await this.itemRepo
+      .createQueryBuilder('item')
+      .select('item.id', 'id')
+      .where('item.id IN (:...ids)', { ids })
+      .andWhere('item.image IS NOT NULL')
+      .getRawMany<{ id: string }>();
+    const imageSet = new Set(withImage.map(r => r.id));
+    return items.map(i => ({ ...i, hasImage: imageSet.has(i.id) }));
   }
 
   async createItem(dto: CreateMenuItemDto) {
@@ -174,5 +196,95 @@ export class MenuService {
     item.modifiers = item.modifiers.filter(m => m.id !== modifierId);
     await this.itemRepo.save(item);
     return { success: true };
+  }
+
+  // ── Item image ───────────────────────────────────────────────────────────────
+
+  private static readonly ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+  private static readonly MAX_IMAGE_BYTES = 2 * 1024 * 1024; // 2 MB
+
+  private validateImage(buffer: Buffer, mimeType: string) {
+    if (!MenuService.ALLOWED_MIME_TYPES.includes(mimeType)) {
+      throw new BadRequestException('Only JPEG, PNG, and WebP images are accepted');
+    }
+    if (buffer.length > MenuService.MAX_IMAGE_BYTES) {
+      throw new BadRequestException('Image must be 2 MB or smaller');
+    }
+  }
+
+  async uploadItemImage(id: string, buffer: Buffer, mimeType: string) {
+    this.validateImage(buffer, mimeType);
+    const item = await this.itemRepo.findOne({ where: { id } });
+    if (!item) throw new NotFoundException('Menu item not found');
+    await this.itemRepo
+      .createQueryBuilder()
+      .update()
+      .set({ image: buffer, imageMimeType: mimeType })
+      .where('id = :id', { id })
+      .execute();
+    return { hasImage: true };
+  }
+
+  async getItemImage(id: string): Promise<{ buffer: Buffer; mimeType: string }> {
+    const row = await this.itemRepo
+      .createQueryBuilder('item')
+      .select(['item.id', 'item.image', 'item.imageMimeType'])
+      .addSelect('item.image')
+      .addSelect('item.imageMimeType')
+      .where('item.id = :id', { id })
+      .getOne();
+    if (!row || !row.image) throw new NotFoundException('No image for this item');
+    return { buffer: row.image, mimeType: row.imageMimeType ?? 'image/jpeg' };
+  }
+
+  async deleteItemImage(id: string) {
+    const item = await this.itemRepo.findOne({ where: { id } });
+    if (!item) throw new NotFoundException('Menu item not found');
+    await this.itemRepo
+      .createQueryBuilder()
+      .update()
+      .set({ image: null as unknown as Buffer, imageMimeType: null as unknown as string })
+      .where('id = :id', { id })
+      .execute();
+    return { hasImage: false };
+  }
+
+  // ── Category image ───────────────────────────────────────────────────────────
+
+  async uploadCategoryImage(id: string, buffer: Buffer, mimeType: string) {
+    this.validateImage(buffer, mimeType);
+    const cat = await this.categoryRepo.findOne({ where: { id } });
+    if (!cat) throw new NotFoundException('Category not found');
+    await this.categoryRepo
+      .createQueryBuilder()
+      .update()
+      .set({ image: buffer, imageMimeType: mimeType })
+      .where('id = :id', { id })
+      .execute();
+    return { hasImage: true };
+  }
+
+  async getCategoryImage(id: string): Promise<{ buffer: Buffer; mimeType: string }> {
+    const row = await this.categoryRepo
+      .createQueryBuilder('cat')
+      .select(['cat.id', 'cat.image', 'cat.imageMimeType'])
+      .addSelect('cat.image')
+      .addSelect('cat.imageMimeType')
+      .where('cat.id = :id', { id })
+      .getOne();
+    if (!row || !row.image) throw new NotFoundException('No image for this category');
+    return { buffer: row.image, mimeType: row.imageMimeType ?? 'image/jpeg' };
+  }
+
+  async deleteCategoryImage(id: string) {
+    const cat = await this.categoryRepo.findOne({ where: { id } });
+    if (!cat) throw new NotFoundException('Category not found');
+    await this.categoryRepo
+      .createQueryBuilder()
+      .update()
+      .set({ image: null as unknown as Buffer, imageMimeType: null as unknown as string })
+      .where('id = :id', { id })
+      .execute();
+    return { hasImage: false };
   }
 }

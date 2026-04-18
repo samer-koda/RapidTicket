@@ -190,8 +190,14 @@ function TablesTab() {
         <select className={styles.headerSelect} value={planId} onChange={e => { setPlanId(e.target.value); closePanel(); }}>
           {plans.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
         </select>
-        <button className={styles.addBtn} onClick={openAdd}>+ Add</button>
+        <button className={styles.addBtn} onClick={openAdd} disabled={!planId}>+ Add</button>
       </div>
+
+      {!planId && (
+        <div className={styles.form}>
+          <p>Create a floor plan first before adding tables.</p>
+        </div>
+      )}
 
       {(adding || selectedTable) && (
         <div className={styles.form}>
@@ -276,15 +282,33 @@ function TablesTab() {
 function CategoriesTab() {
   const [cats, setCats] = useState<Category[]>([]);
   const [editing, setEditing] = useState<Partial<Category> | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const load = useCallback(async () => setCats(await api.menu.categories()), []);
   useEffect(() => { load(); }, [load]);
+
+  const openEdit = (cat: Partial<Category>) => {
+    setEditing(cat);
+    setImageFile(null);
+    setImagePreview(cat.id && cat.hasImage ? api.menu.categoryImageUrl(cat.id) : null);
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] ?? null;
+    setImageFile(file);
+    if (file) setImagePreview(URL.createObjectURL(file));
+  };
 
   const save = async () => {
     if (!editing) return;
     const payload = { name: editing.name!, sortOrder: editing.sortOrder ?? 0 };
+    let savedId = editing.id;
     if (editing.id) await api.menu.updateCategory(editing.id, payload);
-    else await api.menu.createCategory(payload);
+    else { const created = await api.menu.createCategory(payload); savedId = created.id; }
+    if (imageFile && savedId) await api.menu.uploadCategoryImage(savedId, imageFile);
     setEditing(null);
+    setImageFile(null);
+    setImagePreview(null);
     await load();
   };
 
@@ -304,19 +328,30 @@ function CategoriesTab() {
             <span>Sort Order</span>
             <input type="number" value={editing.sortOrder ?? 0} onChange={e => setEditing({ ...editing, sortOrder: +e.target.value })} />
           </div>
+          <div className={styles.fieldGroup}>
+            <span>Image</span>
+            <div className={styles.imageUpload}>
+              {imagePreview && <img src={imagePreview} alt="preview" className={styles.imagePreview} />}
+              <input type="file" accept="image/jpeg,image/png,image/webp" onChange={handleImageChange} />
+              {editing.id && editing.hasImage && !imageFile && (
+                <button type="button" className={styles.removePicBtn} onClick={async () => { await api.menu.deleteCategoryImage(editing.id!); setImagePreview(null); setEditing({ ...editing, hasImage: false }); await load(); }}>Remove image</button>
+              )}
+            </div>
+          </div>
           <button onClick={save}>Save</button>
-          <button onClick={() => setEditing(null)}>Cancel</button>
+          <button onClick={() => { setEditing(null); setImageFile(null); setImagePreview(null); }}>Cancel</button>
         </div>
       )}
       <table className={styles.table}>
-        <thead><tr><th>Name</th><th>Sort</th><th>Actions</th></tr></thead>
+        <thead><tr><th>Image</th><th>Name</th><th>Sort</th><th>Actions</th></tr></thead>
         <tbody>
           {cats.map(c => (
             <tr key={c.id}>
+              <td>{c.hasImage ? <img src={api.menu.categoryImageUrl(c.id)} alt={c.name} className={styles.tableThumb} /> : '—'}</td>
               <td>{c.name}</td>
               <td>{c.sortOrder}</td>
               <td>
-                <button onClick={() => setEditing(c)}>Edit</button>
+                <button onClick={() => openEdit(c)}>Edit</button>
                 <button onClick={async () => { await api.menu.deleteCategory(c.id); await load(); }}>Delete</button>
               </td>
             </tr>
@@ -332,12 +367,26 @@ function MenuTab() {
   const [items, setItems] = useState<MenuItem[]>([]);
   const [cats, setCats] = useState<Category[]>([]);
   const [editing, setEditing] = useState<Partial<MenuItem> | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const load = useCallback(async () => {
     const [i, c] = await Promise.all([api.menu.items(), api.menu.categories()]);
     setItems(i.map(item => ({ ...item, price: Number(item.price) })));
     setCats(c);
   }, []);
   useEffect(() => { load(); }, [load]);
+
+  const openEdit = (item: Partial<MenuItem>) => {
+    setEditing(item);
+    setImageFile(null);
+    setImagePreview(item.id && item.hasImage ? api.menu.itemImageUrl(item.id) : null);
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] ?? null;
+    setImageFile(file);
+    if (file) setImagePreview(URL.createObjectURL(file));
+  };
 
   const save = async () => {
     if (!editing) return;
@@ -350,9 +399,13 @@ function MenuTab() {
       printDestination: (editing.printDestination ?? 'KITCHEN') as 'KITCHEN' | 'BAR' | 'NONE',
       isAvailable: editing.isAvailable ?? true,
     };
+    let savedId = editing.id;
     if (editing.id) await api.menu.updateItem(editing.id, payload);
-    else await api.menu.createItem(payload);
+    else { const created = await api.menu.createItem(payload); savedId = created.id; }
+    if (imageFile && savedId) await api.menu.uploadItemImage(savedId, imageFile);
     setEditing(null);
+    setImageFile(null);
+    setImagePreview(null);
     await load();
   };
 
@@ -360,8 +413,13 @@ function MenuTab() {
     <div className={styles.tab}>
       <div className={styles.tabHeader}>
         <h3>Menu Items</h3>
-        <button className={styles.addBtn} onClick={() => setEditing({})}>+ Add</button>
+        <button className={styles.addBtn} onClick={() => openEdit({})} disabled={!cats.length}>+ Add</button>
       </div>
+      {!cats.length && (
+        <div className={styles.form}>
+          <p>Create a category first before adding menu items.</p>
+        </div>
+      )}
       {editing !== null && (
         <div className={styles.form}>
           <div className={styles.fieldGroup}>
@@ -402,15 +460,26 @@ function MenuTab() {
             <input type="checkbox" checked={editing.isAvailable ?? true} onChange={e => setEditing({ ...editing, isAvailable: e.target.checked })} />
             {' '}Available
           </label>
+          <div className={styles.fieldGroup}>
+            <span>Image</span>
+            <div className={styles.imageUpload}>
+              {imagePreview && <img src={imagePreview} alt="preview" className={styles.imagePreview} />}
+              <input type="file" accept="image/jpeg,image/png,image/webp" onChange={handleImageChange} />
+              {editing.id && editing.hasImage && !imageFile && (
+                <button type="button" className={styles.removePicBtn} onClick={async () => { await api.menu.deleteItemImage(editing.id!); setImagePreview(null); setEditing({ ...editing, hasImage: false }); await load(); }}>Remove image</button>
+              )}
+            </div>
+          </div>
           <button onClick={save}>Save</button>
-          <button onClick={() => setEditing(null)}>Cancel</button>
+          <button onClick={() => { setEditing(null); setImageFile(null); setImagePreview(null); }}>Cancel</button>
         </div>
       )}
       <table className={styles.table}>
-        <thead><tr><th>Name</th><th>Category</th><th>Type</th><th>Print</th><th>Price</th><th>Available</th><th>Actions</th></tr></thead>
+        <thead><tr><th>Image</th><th>Name</th><th>Category</th><th>Type</th><th>Print</th><th>Price</th><th>Available</th><th>Actions</th></tr></thead>
         <tbody>
           {items.map(item => (
             <tr key={item.id}>
+              <td>{item.hasImage ? <img src={api.menu.itemImageUrl(item.id)} alt={item.name} className={styles.tableThumb} /> : '—'}</td>
               <td>{item.name}</td>
               <td>{cats.find(c => c.id === item.categoryId)?.name ?? '—'}</td>
               <td>{item.type}</td>
@@ -418,7 +487,7 @@ function MenuTab() {
               <td>${item.price.toFixed(2)}</td>
               <td>{item.isAvailable ? 'Yes' : 'No'}</td>
               <td>
-                <button onClick={() => setEditing(item)}>Edit</button>
+                <button onClick={() => openEdit(item)}>Edit</button>
                 <button onClick={async () => { await api.menu.deleteItem(item.id); await load(); }}>Delete</button>
               </td>
             </tr>
@@ -863,7 +932,14 @@ function SettingsTab() {
     setResetError('');
     try {
       await api.settings.factoryReset(resetPin);
-      logout();
+      // Clear local station config so the full setup wizard runs again
+      sessionStorage.removeItem('rt_config');
+      sessionStorage.removeItem('rt_session');
+      if (window.electronAPI?.config?.write) {
+        await window.electronAPI.config.write(null as unknown as AppConfig);
+      }
+      // Full reload to restart from Setup → FirstRun wizard
+      window.location.reload();
     } catch (e: unknown) {
       setResetError(e instanceof Error ? e.message : 'Reset failed');
       setResetPin('');

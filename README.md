@@ -163,6 +163,28 @@ Guest receipts are always printed client-side from the station that processed th
 
 ---
 
+## Menu Images
+
+Categories and menu items can optionally have an image (JPEG, PNG, or WebP, max 2 MB). Images are managed in **Back Office → Categories / Menu**.
+
+When present, images appear as:
+- **Category thumbnails** next to each category tab on the Order Screen
+- **Menu item cards** with a photo header on the Order Screen
+- **Modifier picker modal** banner when selecting a menu item
+
+Image endpoints:
+
+| Method | Endpoint | Auth |
+|---|---|---|
+| `POST` | `/menu/items/:id/image` | Admin |
+| `GET` | `/menu/items/:id/image` | Public |
+| `DELETE` | `/menu/items/:id/image` | Admin |
+| `POST` | `/menu/categories/:id/image` | Admin |
+| `GET` | `/menu/categories/:id/image` | Public |
+| `DELETE` | `/menu/categories/:id/image` | Admin |
+
+---
+
 ## Development Scripts (repo root)
 
 ```bash
@@ -178,6 +200,16 @@ npm run migration:run       # apply pending migrations
 npm run migration:revert    # revert last migration
 npm run migration:generate  # generate a new migration from entity changes
 ```
+
+---
+
+## Contributing
+
+Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) for branching conventions, commit style, and the PR process.
+
+To report a security vulnerability, follow the process in [SECURITY.md](SECURITY.md) — do not open a public issue.
+
+This project follows a [Code of Conduct](CODE_OF_CONDUCT.md). By participating, you agree to abide by its terms.
 
 ---
 

@@ -24,26 +24,26 @@ export enum PrintDestination {
 @Entity('menu_items')
 export class MenuItem {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({ type: 'text' })
-  name: string;
+  name!: string;
 
   @Column({ name: 'category_id', type: 'uuid' })
-  categoryId: string;
+  categoryId!: string;
 
   @ManyToOne(() => Category, (cat) => cat.items, { onDelete: 'RESTRICT' })
   @JoinColumn({ name: 'category_id' })
-  category: Category;
+  category!: Category;
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
-  price: number;
+  price!: number;
 
   @Column({ type: 'enum', enum: MenuItemType })
-  type: MenuItemType;
+  type!: MenuItemType;
 
   @Column({ name: 'is_taxable', type: 'boolean', default: true })
-  isTaxable: boolean;
+  isTaxable!: boolean;
 
   @Column({
     name: 'print_destination',
@@ -51,13 +51,19 @@ export class MenuItem {
     enum: PrintDestination,
     default: PrintDestination.NONE,
   })
-  printDestination: PrintDestination;
+  printDestination!: PrintDestination;
 
   @Column({ name: 'is_available', type: 'boolean', default: true })
-  isAvailable: boolean;
+  isAvailable!: boolean;
 
   @Column({ name: 'sort_order', type: 'int', default: 0 })
-  sortOrder: number;
+  sortOrder!: number;
+
+  @Column({ type: 'bytea', nullable: true, select: false })
+  image!: Buffer | null;
+
+  @Column({ name: 'image_mime_type', type: 'varchar', length: 64, nullable: true, select: false })
+  imageMimeType!: string | null;
 
   @ManyToMany(() => Modifier, (mod) => mod.menuItems, { eager: false })
   @JoinTable({
@@ -65,5 +71,5 @@ export class MenuItem {
     joinColumn: { name: 'menu_item_id', referencedColumnName: 'id' },
     inverseJoinColumn: { name: 'modifier_id', referencedColumnName: 'id' },
   })
-  modifiers: Modifier[];
+  modifiers!: Modifier[];
 }

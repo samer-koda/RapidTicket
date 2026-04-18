@@ -110,13 +110,23 @@ export default function OrderScreen({ table, onBack, onPayment }: Props) {
           <div className={styles.categories}>
             {categories.map(c => (
               <button key={c.id} className={`${styles.catBtn} ${c.id === activeCategory ? styles.catActive : ''}`} onClick={() => setActiveCategory(c.id)}>
+                {c.hasImage && <img src={api.menu.categoryImageUrl(c.id)} alt="" className={styles.catThumb} loading="lazy" onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />}
                 {c.name}
               </button>
             ))}
           </div>
           <div className={styles.items}>
             {filteredItems.map(item => (
-              <button key={item.id} className={styles.menuItem} onClick={() => setSelectedItem(item)}>
+              <button key={item.id} className={`${styles.menuItem} ${item.hasImage ? styles.menuItemWithImage : ''}`} onClick={() => setSelectedItem(item)}>
+                {item.hasImage && (
+                  <img
+                    src={api.menu.itemImageUrl(item.id)}
+                    alt={item.name}
+                    className={styles.menuItemImage}
+                    loading="lazy"
+                    onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+                  />
+                )}
                 <span>{item.name}</span>
                 <span className={styles.price}>${item.price.toFixed(2)}</span>
               </button>
@@ -193,6 +203,14 @@ function ModifierPicker({ item, onAdd, onClose }: {
   return (
     <div className={styles.overlay}>
       <div className={styles.modal}>
+        {item.hasImage && (
+          <img
+            src={api.menu.itemImageUrl(item.id)}
+            alt={item.name}
+            className={styles.modalImage}
+            onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+          />
+        )}
         <h3>{item.name} <span className={styles.price}>${item.price.toFixed(2)}</span></h3>
 
         {item.modifiers.length > 0 && (
